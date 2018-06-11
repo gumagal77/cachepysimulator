@@ -1,0 +1,37 @@
+class Associativo(Cache):
+    def __init__(self):
+        super().__init__()
+        self.idx = 0
+
+    def insert(self, tag):
+        if self.idx > self.linhas:
+            #Algoritmo de Substituiçao
+        self.linha[self.idx] = Linha(tag)
+        self.idx += 1
+
+    def look(self, tag):
+        check = False
+        for i in range(self.idx - 1):
+            if self.linha[i].tag == tag:
+                check = True
+        return check
+
+    def loadInstruçao(self, tag):
+        if self.look(tag):
+            self.ThumbsUp += 1
+        else:
+            self.ThumbsDown += 1
+            self.insert(tag)
+
+    def loadData(self, tag):
+        if self.look(tag):
+            self.ThumbsUp += 1
+        else:
+            self.ThumbsDown += 1
+            self.insert(tag)
+
+    def storeData(self, tag):
+        #I dont know yet
+
+    def modifyData(self, tag):
+        #politica de escrita
