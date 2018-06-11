@@ -1,0 +1,16 @@
+class Linha:
+    def __init__(self):
+        self.bit = 0
+        self.tag = 0
+
+class Cache:
+    def __init__(self, linhas, palavras_linhas, nro_linhas_conjunto = None):
+        if nro_linhas_conjunto != None:
+            self.conjuntos = linhas / nro_linhas_conjunto
+            self.linhas_conjunto = nro_linhas_conjunto
+            self.tam_block = palavras_linhas
+            self.sets = [[Linha() for i in range(nro_linhas_conjunto)] for i in range(self.conjuntos)]
+        else:
+            self.linhas = linhas
+            self.tam_block = palavras_linhas
+            self.linha = [Linha() for i in range(linhas)]
