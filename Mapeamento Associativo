@@ -1,18 +1,39 @@
+from asyncio import Queue
+
 class Associativo(Cache):
-    def __init__(self, linhas, palavras_linhas, nro_linhas_conjunto = None):
-        super().__init__(linhas, palavras_linhas, nro_linhas_conjunto)
+    def __init__(self, alg_substituicao = 1, linhas, palavras_linhas):
+        super().__init__(linhas, palavras_linhas)
         self.idx = 0
+        self.alg_substituicao = alg_substituicao #0 para FIFO, 1 para aleatório
+        if alg_substituicao == 0: # FIFO
+            self.fila = Queue(linhas)
 
     def insert(self, tag):
-        if self.idx > self.linhas: #Cache cheia
-            #Algoritmo de Substituiçao, cuidar do BIT de modificaçao
-        self.linha[self.idx] = Linha(tag)
+        if self.alg_substituicao == 0: # FIFO #Algoritmo de Substituiçao, cuidar do BIT de modificaçao
+            if self.fila.full(): #Cache cheia 
+                voltando_memoria = self.fila.get_nowait() #retira o primeiro item adicionado
+                for i in range(self.linhas):
+                    if self.linha[i].tag == voltando_memoria: #encontra o item a ser retirado
+                        linha_nova = i
+                        break
+            elif self.idx < self.linhas: #Cache não cheia, índice numa faixa aceitável
+                linha_nova = self.idx
+            else: #Cache não cheia, procurar um índice
+                for i in range(self.linhas):
+                    if self.linha[i].bit == False:
+                        linha_nova = i
+            self.fila.put_nowait(tag) #adiciona o novo item na fila
+                
+        elif self.alg_substituicao == 1: #aleatorio
+                #fazer
+        
+        self.linha[linha_nova] = Linha(tag, True)
         self.idx += 1
         self.Memoria += 1 #tranferencia do bloco para a cache
 
     def look(self, tag):
         check = -1
-        for i in range(self.idx - 1): #Procuramos o bloco na cache
+        for i in range(min(self.idx - 1, self.linhas)): #Procuramos o bloco na cache
             if self.linha[i].tag == tag:
                 check = i
         if check == -1: #Erro de cache
