@@ -1,6 +1,6 @@
 class Linha:
-    def __init__(self, info = None):
-        self.bit = False
+    def __init__(self, info = None, set = False):
+        self.bit = set
         if info is None:
             self.tag = 0
         else:
