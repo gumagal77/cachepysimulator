@@ -1,37 +1,51 @@
 class Associativo(Cache):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, linhas, palavras_linhas, nro_linhas_conjunto = None):
+        super().__init__(linhas, palavras_linhas, nro_linhas_conjunto)
         self.idx = 0
 
     def insert(self, tag):
-        if self.idx > self.linhas:
-            #Algoritmo de Substituiçao
+        if self.idx > self.linhas: #Cache cheia
+            #Algoritmo de Substituiçao, cuidar do BIT de modificaçao
         self.linha[self.idx] = Linha(tag)
         self.idx += 1
+        self.Memoria += 1 #tranferencia do bloco para a cache
 
     def look(self, tag):
-        check = False
-        for i in range(self.idx - 1):
+        check = -1
+        for i in range(self.idx - 1): #Procuramos o bloco na cache
             if self.linha[i].tag == tag:
-                check = True
+                check = i
+        if check == -1: #Erro de cache
+            self.ThumbsDown += 1
+        else: #Acerto de cache
+            self.ThumbsUp += 1
         return check
 
-    def loadInstruçao(self, tag):
-        if self.look(tag):
-            self.ThumbsUp += 1
+    def writeback(self, tag):
+        idx = self.look(tag) #Verificamos se o bloco esta na cache
+        if idx != -1:
+            self.linha[idx].bit = True #Acerto de cache, bit de uso ligado
         else:
-            self.ThumbsDown += 1
-            self.insert(tag)
+            self.insert(tag) #erro de cache, o bloco é atualizado e transferido para a cache sem bit de uso ligado
 
-    def loadData(self, tag):
-        if self.look(tag):
-            self.ThumbsUp += 1
-        else:
-            self.ThumbsDown += 1
-            self.insert(tag)
+    def writethrough(self, tag):
+        idx = self.look(tag) #Atualizamos a cache e a memoria
+        self.Memoria += 1
 
-    def storeData(self, tag):
+    def loadinstrucao(self, tag):
+        if self.look(tag) == -1: #Verificamos se o bloco se encontra na caixa
+            self.insert(tag) #Falha de cache
+
+    def loaddata(self, tag):
+        if self.look(tag) == -1: #Verificamos se o bloco se encontra na caixa
+            self.insert(tag) #Falha de cache
+
+    def storedata(self, tag):
         #I dont know yet
 
-    def modifyData(self, tag):
-        #politica de escrita
+    def modifydata(self, tag, politics): # 1 == write through || 2 == write back
+        if politics == 1:
+            self.writethrough(tag)
+        else:
+            self.writeback(tag)
+
