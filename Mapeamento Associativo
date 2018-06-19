@@ -1,72 +1,66 @@
-from asyncio import Queue
-
 class Associativo(Cache):
-    def __init__(self, alg_substituicao = 1, linhas, palavras_linhas):
+    def __init__(self, alg_substituicao=1, linhas, palavras_linhas):
         super().__init__(linhas, palavras_linhas)
         self.idx = 0
-        self.alg_substituicao = alg_substituicao #0 para FIFO, 1 para aleatório
-        if alg_substituicao == 0: # FIFO
+        self.alg_substituicao = alg_substituicao  # 0 para FIFO, 1 para aleatório
+        if alg_substituicao == 0:  # FIFO
             self.fila = Queue(linhas)
 
     def insert(self, tag):
-        if self.alg_substituicao == 0: # FIFO #Algoritmo de Substituiçao, cuidar do BIT de modificaçao
-            if self.fila.full(): #Cache cheia 
-                voltando_memoria = self.fila.get_nowait() #retira o primeiro item adicionado
+        if self.alg_substituicao == 0:  # FIFO #Algoritmo de Substituiçao, cuidar do BIT de modificaçao
+            if self.fila.full():  # Cache cheia
+                voltando_memoria = self.fila.get_nowait()  # retira o primeiro item adicionado
                 for i in range(self.linhas):
-                    if self.linha[i].tag == voltando_memoria: #encontra o item a ser retirado
+                    if self.linha[i].tag == voltando_memoria:  # encontra o item a ser retirado
                         linha_nova = i
                         break
-            elif self.idx < self.linhas: #Cache não cheia, índice numa faixa aceitável
+            elif self.idx < self.linhas:  # Cache não cheia, índice numa faixa aceitável
                 linha_nova = self.idx
-            else: #Cache não cheia, procurar um índice
-                for i in range(self.linhas):
-                    if self.linha[i].bit == False:
-                        linha_nova = i
-            self.fila.put_nowait(tag) #adiciona o novo item na fila
-                
-        elif self.alg_substituicao == 1: #aleatorio
-                #fazer
-        
-        self.linha[linha_nova] = Linha(tag, True)
+            self.fila.put_nowait(tag)  # adiciona o novo item na fila
+
+        elif self.idx >= self.linhas:  # aleatorio
+            linha_nova = randint(0, self.linhas - 1)
+
+        self.linha[linha_nova] = Linha(tag)
         self.idx += 1
-        self.Memoria += 1 #tranferencia do bloco para a cache
+        self.Memoria += 1  # tranferencia do bloco para a cache
 
     def look(self, tag):
         check = -1
-        for i in range(min(self.idx - 1, self.linhas)): #Procuramos o bloco na cache
+        for i in range(min(self.idx - 1, self.linhas)):  # Procuramos o bloco na cache
             if self.linha[i].tag == tag:
                 check = i
-        if check == -1: #Erro de cache
+        if check == -1:  # Erro de cache
             self.ThumbsDown += 1
-        else: #Acerto de cache
+        else:  # Acerto de cache
             self.ThumbsUp += 1
         return check
 
     def writeback(self, tag):
-        idx = self.look(tag) #Verificamos se o bloco esta na cache
+        idx = self.look(tag)  # Verificamos se o bloco esta na cache
         if idx != -1:
-            self.linha[idx].bit = True #Acerto de cache, bit de uso ligado
+            self.linha[idx].bit = True  # Acerto de cache, bit de uso ligado
         else:
-            self.insert(tag) #erro de cache, o bloco é atualizado e transferido para a cache sem bit de uso ligado
+            self.insert(tag)  # erro de cache, o bloco é atualizado e transferido para a cache sem bit de uso ligado
 
     def writethrough(self, tag):
-        idx = self.look(tag) #Atualizamos a cache e a memoria
+        self.look(tag)  # Atualizamos a cache e a memoria
         self.Memoria += 1
 
     def loadinstrucao(self, tag):
-        if self.look(tag) == -1: #Verificamos se o bloco se encontra na caixa
-            self.insert(tag) #Falha de cache
+        if self.look(tag) == -1:  # Verificamos se o bloco se encontra na caixa
+            self.insert(tag)  # Falha de cache
 
     def loaddata(self, tag):
-        if self.look(tag) == -1: #Verificamos se o bloco se encontra na caixa
-            self.insert(tag) #Falha de cache
+        if self.look(tag) == -1:  # Verificamos se o bloco se encontra na caixa
+            self.insert(tag)  # Falha de cache
 
     def storedata(self, tag):
-        #I dont know yet
 
-    def modifydata(self, tag, politics): # 1 == write through || 2 == write back
+    # I dont know yet
+
+    def modifydata(self, tag, politics):  # 1 == write through || 2 == write back
         if politics == 1:
             self.writethrough(tag)
         else:
             self.writeback(tag)
-
