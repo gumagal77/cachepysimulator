@@ -1,3 +1,33 @@
+from asyncio import Queue
+from random import randint
+
+
+
+class Linha:
+    def __init__(self, info = None, set = False):
+        self.bit = set
+        if info is None:
+            self.tag = 0
+        else:
+            self.tag = info
+
+class Cache:
+    def __init__(self, linhas, palavras_linhas, nro_linhas_conjunto = None):
+        self.ThumbsUp = 0 #Acerto de cache
+        self.ThumbsDown = 0 #Erro de cache
+        self.Memoria = 0 #Acesso a memoria
+        self.linhas = linhas
+        self.tam_block = palavras_linhas
+        if nro_linhas_conjunto is not None:
+            self.conjuntos = linhas / nro_linhas_conjunto
+            self.linhas_conjunto = nro_linhas_conjunto
+            self.sets = [[Linha() for i in range(nro_linhas_conjunto)] for i in range(self.conjuntos)]
+            self.associativo_conjunto = True
+        else:
+            self.associativo_conjunto = False
+            self.linha = [Linha() for i in range(linhas)]
+
+
 class Associativo(Cache):
     def __init__(self, alg_substituicao=1, linhas, palavras_linhas):
         super().__init__(linhas, palavras_linhas)
@@ -7,20 +37,22 @@ class Associativo(Cache):
             self.fila = Queue(linhas)
 
     def insert(self, tag):
-        if self.alg_substituicao == 0:  # FIFO #Algoritmo de Substituiçao, cuidar do BIT de modificaçao
+        if self.alg_substituicao == 0:  # FIFO #Algoritmo de Substituiçao
             if self.fila.full():  # Cache cheia
                 voltando_memoria = self.fila.get_nowait()  # retira o primeiro item adicionado
                 for i in range(self.linhas):
                     if self.linha[i].tag == voltando_memoria:  # encontra o item a ser retirado
                         linha_nova = i
                         break
+                if self.linha[linha_nova].bit:
+                    self.Memoria += 1
             elif self.idx < self.linhas:  # Cache não cheia, índice numa faixa aceitável
                 linha_nova = self.idx
             self.fila.put_nowait(tag)  # adiciona o novo item na fila
 
         elif self.idx >= self.linhas:  # aleatorio
             linha_nova = randint(0, self.linhas - 1)
-
+        
         self.linha[linha_nova] = Linha(tag)
         self.idx += 1
         self.Memoria += 1  # tranferencia do bloco para a cache
