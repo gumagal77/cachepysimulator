@@ -38,12 +38,6 @@ class Associativo(Cache):
         if alg_substituicao == 0:  # FIFO
             self.fila = Queue(linhas)
 
-
-        
-       
-
-        
-
         return s[0]
             
 
