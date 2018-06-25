@@ -1,4 +1,4 @@
-import Cache
+from AsctMap import *
 
-n = Cache.Cache(8, 2)
+n = Cache(8,2)
 print(n.linhas)

@@ -33,8 +33,9 @@ class Cache:
 '''
 
 class Associativo(Cache):
-    def __init__(self, alg_substituicao=1, linhas, palavras_linhas):
-        super().__init__(linhas, palavras_linhas)
+    
+    def __init__(self, linhas, palavras_linhas, alg_substituicao=1):
+        super().__init__(self, linhas, palavras_linhas)
         self.idx = 0
         self.alg_substituicao = alg_substituicao  # 0 para FIFO, 1 para aleatório
         if alg_substituicao == 0:  # FIFO
