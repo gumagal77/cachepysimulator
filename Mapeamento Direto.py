@@ -33,10 +33,10 @@ class mapeamentoDireto(Cache):
     def look(self, adress):
         self.calcula(adress)
         if self.linha[self.idx].tag == self.q_tag:
-            self.ThumbsUp += 1
+            self.cache_hit += 1
             return True
         else:
-            self.ThumbsDown += 1
+            self.cache_miss += 1
             self.insert()
             return False
 

@@ -8,8 +8,8 @@ class Linha:
 
 class Cache:
     def __init__(self, linhas, palavras_linhas, nro_linhas_conjunto = None):
-        self.ThumbsUp = 0 #Acerto de cache
-        self.ThumbsDown = 0 #Erro de cache
+        self.cache_hit = 0 #Acerto de cache
+        self.cache_miss = 0 #Erro de cache
         self.Memoria = 0 #Acesso a memoria
         self.linhas = linhas
         self.tam_block = palavras_linhas
