@@ -1,6 +1,7 @@
+from Cache import *
 class mapeamentoDireto(Cache):
     def __init__(self, linhas, palavras_linhas, poli):
-        super().__init__(linhas, palavras_linhas)
+        super().__init__(self, linhas, palavras_linhas)
         self.q_tag = 0
         self.idx = 0
         self.politica = poli
@@ -11,9 +12,6 @@ class mapeamentoDireto(Cache):
         endereco = str(bin(int(endereco, 16))) #representaçao em binario do endereço no formato string
         endereco = endereco[2: ] #removemos o 0b
         
-        
-
-
         return tipo
 
     def insert(self):
