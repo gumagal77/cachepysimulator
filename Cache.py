@@ -21,3 +21,4 @@ class Cache:
         else:
             self.associativo_conjunto = False
             self.linha = [Linha() for i in range(linhas)]
+

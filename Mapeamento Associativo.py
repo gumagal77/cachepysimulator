@@ -1,10 +1,12 @@
 from asyncio import Queue
 from random import randint
+from Cache import *
 
 #entrada:
-# arquivo, tipo de cache (direta, associativa, associativa cj), numero linhas total cache, número de palavras por linhas, (ass cj) numero de linhas por conjunto
+# arquivo, tipo de cache (direta, associativa, associativa cj),
+# numero linhas total cache, número de palavras por linhas, (ass cj) numero de linhas por conjunto
 
-
+'''
 class Linha:
     def __init__(self, info = None, set = False):
         self.bit = set
@@ -28,7 +30,7 @@ class Cache:
         else:
             self.associativo_conjunto = False
             self.linha = [Linha() for i in range(linhas)]
-
+'''
 
 class Associativo(Cache):
     def __init__(self, alg_substituicao=1, linhas, palavras_linhas):
