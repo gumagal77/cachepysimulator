@@ -14,7 +14,6 @@ class Linha:
             self.tag = 0
         else:
             self.tag = info
-
 class Cache:
     def __init__(self, linhas, palavras_linhas, nro_linhas_conjunto = None):
         self.cache_hit = 0 #Acerto de cache
@@ -33,23 +32,21 @@ class Cache:
 '''
 
 class Associativo(Cache):
-
-
-    def __init__(self, linhas, palavras_linhas, alg_substituicao=1, politica = 1):
-        super().__init__(linhas, palavras_linhas)
+    
+    def __init__(self, linhas, palavras_linhas, alg_substituicao=1):
+        super().__init__(self, linhas, palavras_linhas)
         self.idx = 0
-        self.politics = politica # 1 == write through || 2 == write back
         self.alg_substituicao = alg_substituicao  # 0 para FIFO, 1 para aleatório
         if alg_substituicao == 0:  # FIFO
             self.fila = Queue(linhas)
+
+        return s[0]
             
-    def calcula(self, adress):
-        #waiting
 
     def insert(self, tag):
         linha_nova = self.idx
         if self.alg_substituicao == 0:  # FIFO #Algoritmo de Substituiçao
-
+            
             if self.fila.full():  # Cache cheia
                 voltando_memoria = self.fila.get_nowait()  # retira o primeiro item adicionado
                 for i in range(self.linhas):
@@ -65,15 +62,15 @@ class Associativo(Cache):
         elif self.idx >= self.linhas:  # aleatorio
             linha_nova = randint(0, self.linhas - 1)
             if self.linha[linha_nova].bit:
-                self.Memoria += 1
-
+                    self.Memoria += 1
+        
         self.linha[linha_nova] = Linha(tag)
         self.idx += 1
         self.Memoria += 1  # tranferencia do bloco para a cache
 
     def look(self, tag):
         check = -1
-        for i in range(min(self.idx, self.linhas)):  # Procuramos o bloco na cache
+        for i in range(min(self.idx - 1, self.linhas)):  # Procuramos o bloco na cache
             if self.linha[i].tag == tag:
                 check = i
         if check == -1:  # Erro de cache
@@ -101,13 +98,13 @@ class Associativo(Cache):
         if self.look(tag) == -1:  # Verificamos se o bloco se encontra na caixa
             self.insert(tag)  # Falha de cache
 
-    def storedata(self, tag):
-        if self.politics == 1:
+    def storedata(self, tag, politics):
+        if politics == 1:
             self.writethrough(tag)
         else:
             self.writeback(tag)
 
-    def modifydata(self, tag):
-        self.loaddata(tag)
-        self.storedata(tag)
 
+    def modifydata(self, tag, politics):  # 1 == write through || 2 == write back
+        self.loaddata(tag)
+        self.storedata(tag, politics)
