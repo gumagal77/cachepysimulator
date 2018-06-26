@@ -1,4 +1,4 @@
 from DrctMap import *
 
-n = Cache(8,2)
-print(n.linhas)
+n = "     d     a".split()
+print(n[0])
