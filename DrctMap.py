@@ -1,24 +1,17 @@
 from Cache import *
 class mapeamentoDireto(Cache):
     def __init__(self, linhas, palavras_linhas, poli):
-        super().__init__(linhas, palavras_linhas)
+        super().__init__(self, linhas, palavras_linhas)
         self.q_tag = 0
         self.idx = 0
-        self.politica = poli # 1 - writethrough e 2 - writeback
+        self.politica = poli
 
     def calcula(self, adress):
-        tipo, endereco = adress.split()  # separamos a entrada no tipo de instruçao e o endereco
-        endereco = endereco[:-2]  # Removemos o q tem dps da virgula e a propria
-        tam = len(endereco) * 4 #pegamos o total de numeros binarios que o nosso numero vai ter
-        endereco = str(bin(int(endereco, 16)))  # representaçao em binario do endereço no formato string
-        endereco = endereco[2:]  # removemos o 0b
-        tam -= len(endereco) #diferença para saber quantos zeros faltam no numero
-        temp = ''
-        for i in range(tam):
-            temp += '0'
-        endereco = temp + endereco #endereço em binario de fato
-
-
+        tipo, endereco = adress.split() #separamos a entrada no tipo de instruçao e o endereco
+        endereco = endereco[:-2] #Removemos o q tem dps da virgula e a propria
+        endereco = str(bin(int(endereco, 16))) #representaçao em binario do endereço no formato string
+        endereco = endereco[2: ] #removemos o 0b
+        
         return tipo
 
     def insert(self):
@@ -59,7 +52,7 @@ class mapeamentoDireto(Cache):
 
     def modifyData(self, adress):
         self.look(adress)
-        if self.politica == 1:
+        if self.politica == 1:  # 1 - writethrough e 2 - writeback
             self.writethrough(adress)
         else:
             self.writeback(adress)
