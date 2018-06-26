@@ -7,11 +7,18 @@ class CacheDrct(Cache):
         self.politica = poli
 
     def calcula(self, adress):
-        tipo, endereco = adress.split() #separamos a entrada no tipo de instruçao e o endereco
-        endereco = endereco[:-2] #Removemos o q tem dps da virgula e a propria
-        endereco = str(bin(int(endereco, 16))) #representaçao em binario do endereço no formato string
-        endereco = endereco[2: ] #removemos o 0b
-        
+        tipo, endereco = adress.split()  # separamos a entrada no tipo de instruçao e o endereco
+        endereco = endereco[:-2]  # Removemos o q tem dps da virgula e a propria
+        tam = len(endereco) * 4 #pegamos o total de numeros binarios que o nosso numero vai ter
+        endereco = str(bin(int(endereco, 16)))  # representaçao em binario do endereço no formato string
+        endereco = endereco[2:]  # removemos o 0b
+        tam -= len(endereco) #diferença para saber quantos zeros faltam no numero
+        temp = ''
+        for i in range(tam):
+            temp += '0'
+        endereco = temp + endereco #endereço em binario de fato
+
+
         return tipo
 
     def insert(self):
