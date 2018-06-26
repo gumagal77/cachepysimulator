@@ -14,7 +14,6 @@ class Linha:
             self.tag = 0
         else:
             self.tag = info
-
 class Cache:
     def __init__(self, linhas, palavras_linhas, nro_linhas_conjunto = None):
         self.cache_hit = 0 #Acerto de cache
