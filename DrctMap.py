@@ -1,58 +1,43 @@
-from Cache import *
-class CacheDrct(Cache):
-    def __init__(self, linhas, palavras_linhas, poli):
-        super().__init__(linhas, palavras_linhas)
-        self.q_tag = 0
-        self.idx = 0
-        self.politica = poli
+class Direto(CacheBySets):
+    def __init__(self, linhas, palavras_linha, poli):
+        super().__init__(linhas, palavras_linha, 1, poli, 1)
 
-    def calcula(self, adress):
-        tipo, endereco = adress.split() #separamos a entrada no tipo de instruçao e o endereco
-        endereco = endereco[:-2] #Removemos o q tem dps da virgula e a propria
-        endereco = str(bin(int(endereco, 16))) #representaçao em binario do endereço no formato string
-        endereco = endereco[2: ] #removemos o 0b
-        
-        return tipo
-
-    def insert(self):
-        if self.linha[self.idx].bit and self.politica == 2:
-            self.Memoria += 1
-        self.linha[self.idx].tag = self.q_tag
-        self.Memoria += 1
-
-    def writeback(self, adress):
-        if self.look(adress):
-            self.linha[self.idx].bit = True
-
-    def writethrough(self, adress):
-        if self.look(adress):
-            self.Memoria += 1
-
-    def look(self, adress):
-        self.calcula(adress)
-        if self.linha[self.idx].tag == self.q_tag:
+    def d_look(self):
+        if self.cache[self.qconj].set[0].tag == self.qtag:
             self.cache_hit += 1
             return True
         else:
             self.cache_miss += 1
-            self.insert()
             return False
 
-    def loadInstrucao(self, adress):
-        self.look(adress)
+    def d_insert(self):
+        if self.cache[self.qconj].set[0].bit_uso:
+            self.Memoria += 1
+        self.cache[self.qconj].set[0] = Linha(self.qtag)
+        self.Memoria += 1
 
-    def loadData(self, adress):
-        self.look(adress)
+    def d_writethrough(self):
+        self.d_look()
+        self.d_insert()
 
-    def storeData(self, adress):
-        if self.politica == 1:  # 1 to writethrough n 2 to writeback
-            self.writethrough(adress)
+    def d_writeback(self):
+        if self.d_look():
+            self.cache[self.qconj].set[0].bit_uso = True
         else:
-            self.writeback(adress)
+            self.d_insert()
 
-    def modifyData(self, adress):
-        self.look(adress)
-        if self.politica == 1:  # 1 - writethrough e 2 - writeback
-            self.writethrough(adress)
+    def d_loadinstrucao(self):
+        if self.d_look() == False:
+            self.d_insert()
+
+    def d_loaddata(self):
+        self.d_loadinstrucao()
+
+    def d_storeData(self):
+        if self.politics == 1:
+            self.d_writethrough()
         else:
-            self.writeback(adress)
+            self.d_writeback()
+
+    def d_modifyData(self):  # rever método # 1 == write through || 2 == write back
+        self.d_storeData()
