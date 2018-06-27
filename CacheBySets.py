@@ -3,9 +3,22 @@ class CacheBySets(Cache):
         super().__init__(linhas, palavras_linhas, num_conjuntos)
         self.politics = politica
         self.algo = alg_substituicao #FIFO = 0 & Aleatorio = 1
+        self.qconj = 0 #qual conjunto o bloco atual pertence
+        self.conjuntos = num_conjuntos
+        self.qtag = 0 # qual a tag do bloco atual
 
-    def insert(self, tag, conj=0):
-        current = self.cache[conj]
+   
+    #SEMPRE UTILIZAR PARA ATUALIZAR QUAL É O CONJUNTO E TAG ATUAL
+    def calcula(self, adress):
+        if self.conjuntos is None:
+            self.qconj = 0
+        else:
+            self.qconj = #CALCULAR QUAL CONJUNTO
+        self.qtag = #CALCULAR A TAG
+        return #TIPO DA INSTRUÇAO
+
+    def insert(self):
+        current = self.cache[self.qconj]
 
         if current.isFull():
             if self.algo == 0:  # FIFO #Algoritmo de Substituiçao
@@ -18,15 +31,15 @@ class CacheBySets(Cache):
             linha_nova = current.index
 
         current.fila.put_nowait(linha_nova) #Inserimos na fila o novo elemento
-        current.set[linha_nova].tag = tag
+        current.set[linha_nova].tag = self.qtag
 
-        self.cache[conj] = current
+        self.cache[self.qconj] = current
         self.Memoria += 1
 
-    def look(self, tag, conj=0):  # OK
+    def look(self):  # OK
         index = -1
-        for i in range(self.cache[conj].tot_lin):  # Procuramos o bloco no conjunto
-            if self.cache[conj].set[i].tag == tag:
+        for i in range(self.cache[self.qconj].tot_lin):  # Procuramos o bloco no conjunto
+            if self.cache[self.qconj].set[i].tag == self.qtag:
                 index = i
                 break
         if index != -1:  # Acerto de cache
@@ -35,34 +48,33 @@ class CacheBySets(Cache):
             self.cache_miss += 1
         return index
 
-    def writeback(self, tag, conj=0):
-        index = self.look(tag, conj)
+    def writeback(self):
+        index = self.look()
         if index != -1:
-            self.cache[conj].set[index].bit_uso = True  # Acerto de cache, bit de uso ligado (bloco atualizado)
+            self.cache[self.qconj].set[index].bit_uso = True  # Acerto de cache, bit de uso ligado (bloco atualizado)
         else:
-            self.insert(tag, conj)  # erro de cache, o bloco é atualizado e transferido para a cache sem bit de uso ligado
+            self.insert()  # erro de cache, o bloco é atualizado e transferido para a cache sem bit de uso ligado
 
-    def writethrough(self, tag, conj=0):
-        index = self.look(tag, conj)  # Atualizamos a cache e a memoria
+    def writethrough(self):
+        index = self.look()  # Atualizamos a cache e a memoria
         if index == -1:
-            self.insert(tag, conj)
+            self.insert()
         else:
             self.Memoria += 1
 
-    def loadInstrucao(self, tag, conj=0):  # OK
-        if self.look(tag, conj) == -1:  # Verificamos se o bloco se encontra na caixa
-            self.insert(tag, conj)  # Falha de cache
+    def loadInstrucao(self):  # OK
+        if self.look() == -1:  # Verificamos se o bloco se encontra na caixa
+            self.insert()  # Falha de cache
 
-    def loadData(self, tag, conj=0):  # OK
-        if self.look(tag, conj) == -1:  # Verificamos se o bloco se encontra na caixa
-            self.insert(tag, conj)  # Falha de cache
+    def loadData(self):  # OK
+        if self.look() == -1:  # Verificamos se o bloco se encontra na caixa
+            self.insert()  # Falha de cache
 
-    def storeData(self, tag, conj=0):
+    def storeData(self):
         if self.politics == 1:
-            self.writethrough(tag, conj)
+            self.writethrough()
         else:
-            self.writeback(tag, conj)
+            self.writeback()
 
-    def modifyData(self, tag, conj=0):  # rever método # 1 == write through || 2 == write back
-        self.storeData(tag, conj)
-
+    def modifyData(self):  # rever método # 1 == write through || 2 == write back
+        self.storeData()
