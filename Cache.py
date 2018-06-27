@@ -16,17 +16,18 @@ class Conjunto:
 
 
 class Cache:
-    def __init__(self, linhas, palavras_linhas, nro_linhas_conjunto = None):
+    def __init__(self, linhas, palavras_linhas, nro_linhas_conjunto):
         self.cache_hit = 0 #Acerto de cache
         self.cache_miss = 0 #Erro de cache
         self.Memoria = 0 #Acesso a memoria
 
         self.qtd_linhas = linhas
         self.tam_block = palavras_linhas
-
-        if nro_linhas_conjunto is not None:
-            self.num_conjuntos = linhas / nro_linhas_conjunto
-            self.cache = [Conjunto(nro_linhas_conjunto) for i in range(self.num_conjuntos)]
-        else:
-            self.cache = [Conjunto(linhas)]
+        
+        if(nro_linhas_conjunto == -1):
+            nro_linhas_conjunto = linhas
+        
+        self.num_conjuntos = int(linhas / nro_linhas_conjunto)
+        self.cache = [Conjunto(nro_linhas_conjunto) for i in range(self.num_conjuntos)]
+        
 

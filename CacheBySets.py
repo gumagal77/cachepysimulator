@@ -1,21 +1,24 @@
 class CacheBySets(Cache):
-    def __init__(self, linhas, palavras_linhas, alg_substituicao = 1, politica = 1, num_conjuntos = None):
-        super().__init__(linhas, palavras_linhas, num_conjuntos)
+    def __init__(self, linhas, palavras_linhas, alg_substituicao = 1, politica = 1, nro_linhas_conjuntos = -1):
+        super().__init__(linhas, palavras_linhas, nro_linhas_conjuntos)
         self.politics = politica
         self.algo = alg_substituicao #FIFO = 0 & Aleatorio = 1
         self.qconj = 0 #qual conjunto o bloco atual pertence
-        self.conjuntos = num_conjuntos
         self.qtag = 0 # qual a tag do bloco atual
 
    
     #SEMPRE UTILIZAR PARA ATUALIZAR QUAL É O CONJUNTO E TAG ATUAL
     def calcula(self, adress):
-        if self.conjuntos is None:
-            self.qconj = 0
-        else:
-            self.qconj = #CALCULAR QUAL CONJUNTO
-        self.qtag = #CALCULAR A TAG
-        return #TIPO DA INSTRUÇAO
+        # calculo da tag e set
+        tipo, endereco = adress.split()
+        endereco = int(endereco[:-2], 16)
+        endereco = int(endereco/self.tam_block)
+        whichset = endereco%self.num_conjuntos
+        tag = int(endereco/self.num_conjuntos)
+        
+        self.qconj = whichset
+        self.qtag = tag
+        return tipo
 
     def insert(self):
         current = self.cache[self.qconj]
