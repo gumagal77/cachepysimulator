@@ -1,3 +1,4 @@
+#from Cache import*
 class Animal:
     def __init__(self):
         self.n = 1
@@ -17,3 +18,5 @@ class Peixe(Animal):
 m = Peixe()
 m.move()
 
+#m = Cache(1,1,1)
+print(m)

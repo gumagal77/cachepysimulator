@@ -1,4 +1,4 @@
-
+from asyncio import Queue
 class Linha:
     def __init__(self, info = -1):
         self.bit_uso = False
@@ -31,3 +31,8 @@ class Cache:
         self.cache = [Conjunto(nro_linhas_conjunto) for i in range(self.num_conjuntos)]
         
 
+    def __str__(self):
+        hm = self.cache_hit+self.cache_miss
+        if not hm:
+            hm = 1
+        return 'Cache Hit: %d (%.2f)\nCache Miss: %d (%.2f)\nQuantidade de acesso ao barramento: %d' %(self.cache_hit, self.cache_hit/hm, self.cache_miss, self.cache_miss/hm, self.Memoria)
