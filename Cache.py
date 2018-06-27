@@ -6,7 +6,7 @@ class Linha:
 
 class Conjunto:
     def __init__(self, nro_linhas_conjunto = 1):
-        self.set = [Linha() for i in range(nro_linhas_conjunto)]
+        self.conj = [Linha() for i in range(nro_linhas_conjunto)]
         self.index = 0
         self.tot_lin = nro_linhas_conjunto
         self.fila = Queue()

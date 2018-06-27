@@ -1,3 +1,6 @@
+from Cache import *
+from random import randint
+import asyncio
 class CacheBySets(Cache):
     def __init__(self, linhas, palavras_linhas, alg_substituicao = 1, politica = 1, nro_linhas_conjuntos = -1):
         super().__init__(linhas, palavras_linhas, nro_linhas_conjuntos)
@@ -9,7 +12,7 @@ class CacheBySets(Cache):
    
     #SEMPRE UTILIZAR PARA ATUALIZAR QUAL É O CONJUNTO E TAG ATUAL
     def calcula(self, adress):
-        # calculo da tag e set
+        # calculo da tag e conj
         tipo, endereco = adress.split()
         endereco = int(endereco[:-2], 16)
         endereco = int(endereco/self.tam_block)
@@ -28,13 +31,13 @@ class CacheBySets(Cache):
                 linha_nova = current.fila.get_nowait()  # retira o primeiro item adicionado
             else:  # aleatorio
                 linha_nova = randint(0, current.tot_lin - 1)
-            if current.set[linha_nova].bit_uso:
+            if current.conj[linha_nova].bit_uso:
                 self.Memoria += 1
         else:
             linha_nova = current.index
 
         current.fila.put_nowait(linha_nova) #Inserimos na fila o novo elemento
-        current.set[linha_nova].tag = self.qtag
+        current.conj[linha_nova].tag = self.qtag
 
         self.cache[self.qconj] = current
         self.Memoria += 1
@@ -42,7 +45,7 @@ class CacheBySets(Cache):
     def look(self):  # OK
         index = -1
         for i in range(self.cache[self.qconj].tot_lin):  # Procuramos o bloco no conjunto
-            if self.cache[self.qconj].set[i].tag == self.qtag:
+            if self.cache[self.qconj].conj[i].tag == self.qtag:
                 index = i
                 break
         if index != -1:  # Acerto de cache
@@ -51,33 +54,35 @@ class CacheBySets(Cache):
             self.cache_miss += 1
         return index
 
-    def writeback(self):
+    def writeBack(self):
         index = self.look()
         if index != -1:
-            self.cache[self.qconj].set[index].bit_uso = True  # Acerto de cache, bit de uso ligado (bloco atualizado)
+            self.cache[self.qconj].conj[index].bit_uso = True  # Acerto de cache, bit de uso ligado (bloco atualizado)
         else:
             self.insert()  # erro de cache, o bloco é atualizado e transferido para a cache sem bit de uso ligado
 
-    def writethrough(self):
+    def writeThrough(self):
         index = self.look()  # Atualizamos a cache e a memoria
         if index == -1:
             self.insert()
         else:
             self.Memoria += 1
-
-    def loadInstrucao(self):  # OK
+            
+    def load(self):
         if self.look() == -1:  # Verificamos se o bloco se encontra na caixa
             self.insert()  # Falha de cache
+    
+    def loadInstrucao(self):  # OK
+        self.load()
 
     def loadData(self):  # OK
-        if self.look() == -1:  # Verificamos se o bloco se encontra na caixa
-            self.insert()  # Falha de cache
+        self.load() 
 
     def storeData(self):
         if self.politics == 1:
-            self.writethrough()
+            self.writeThrough()
         else:
-            self.writeback()
+            self.writeBack()
 
     def modifyData(self):  # rever método # 1 == write through || 2 == write back
         self.storeData()

@@ -1,4 +1,19 @@
-from DrctMap import *
+class Animal:
+    def __init__(self):
+        self.n = 1
+    def run(self):
+        print('correndo')
+    def move(self):
+        self.run()
 
-n = "     d     a".split()
-print(n[0])
+class Peixe(Animal):
+    def __init__(self):
+        super().__init__()
+        self.n = 2
+        
+    def run(self):
+        print("nadando")
+
+m = Peixe()
+m.move()
+

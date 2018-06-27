@@ -1,65 +1,45 @@
-from Cache import *
-class CacheDrct(Cache):
-    def __init__(self, linhas, palavras_linhas, poli):
-        super().__init__(linhas, palavras_linhas)
-        self.q_tag = 0
-        self.idx = 0
-        self.politica = poli
+from CacheBySets import *
+class CacheDrct(CacheBySets):
+    def __init__(self, linhas, palavras_linha, poli):
+        super().__init__(linhas, palavras_linha, 1, poli, 1)
 
-    def calcula(self, adress):
-        tipo, endereco = adress.split()  # separamos a entrada no tipo de instruçao e o endereco
-        endereco = endereco[:-2]  # Removemos o q tem dps da virgula e a propria
-        tam = len(endereco) * 4 #pegamos o total de numeros binarios que o nosso numero vai ter
-        endereco = str(bin(int(endereco, 16)))  # representaçao em binario do endereço no formato string
-        endereco = endereco[2:]  # removemos o 0b
-        tam -= len(endereco) #diferença para saber quantos zeros faltam no numero
-        temp = ''
-        for i in range(tam):
-            temp += '0'
-        endereco = temp + endereco #endereço em binario de fato
-
-
-        return tipo
-
-    def insert(self):
-        if self.linha[self.idx].bit and self.politica == 2:
-            self.Memoria += 1
-        self.linha[self.idx].tag = self.q_tag
-        self.Memoria += 1
-
-    def writeback(self, adress):
-        if self.look(adress):
-            self.linha[self.idx].bit = True
-
-    def writethrough(self, adress):
-        if self.look(adress):
-            self.Memoria += 1
-
-    def look(self, adress):
-        self.calcula(adress)
-        if self.linha[self.idx].tag == self.q_tag:
+    def look(self):
+        if self.cache[self.qconj].conj[0].tag == self.qtag:
             self.cache_hit += 1
-            return True
+            return 1
         else:
             self.cache_miss += 1
+            return -1
+
+    def insert(self):
+        if self.cache[self.qconj].conj[0].bit_uso:
+            self.Memoria += 1
+        self.cache[self.qconj].conj[0] = Linha(self.qtag)
+        self.Memoria += 1
+
+    def writeThrough(self):
+        self.look()
+        self.insert()
+
+    def writeBack(self):
+        if self.look() != -1:
+            self.cache[self.qconj].conj[0].bit_uso = True
+        else:
             self.insert()
-            return False
+    '''
+    def loadInstrucao(self):
+        if self.d_look() == False:
+            self.d_insert()
 
-    def loadInstrucao(self, adress):
-        self.look(adress)
-
-    def loadData(self, adress):
-        self.look(adress)
-
-    def storeData(self, adress):
-        if self.politica == 1:  # 1 to writethrough n 2 to writeback
-            self.writethrough(adress)
+    def loadData(self):
+        self.d_loadinstrucao()
+    
+    def storeData(self):
+        if self.politics == 1:
+            self.d_writethrough()
         else:
-            self.writeback(adress)
+            self.d_writeback()
 
-    def modifyData(self, adress):
-        self.look(adress)
-        if self.politica == 1:  # 1 - writethrough e 2 - writeback
-            self.writethrough(adress)
-        else:
-            self.writeback(adress)
+    def d_modifyData(self):  # rever método # 1 == write through || 2 == write back
+        self.d_storeData()
+    '''
