@@ -24,6 +24,8 @@ def start_simulation():
             mapt.storeData()
         elif typ == 'M':
             mapt.modifyData()
+        else:
+            print('Instrução inválida')
 
 
     arqname = str(str(menu.linhas_cache) + 'x' + str(menu.palavras_linha) + '_' + tmap + str(datetime.now()).replace(':', '-') + '.txt')

@@ -35,4 +35,4 @@ class Cache:
         hm = self.cache_hit+self.cache_miss
         if not hm:
             hm = 1
-        return 'Cache Hit: %d (%.2f)\nCache Miss: %d (%.2f)\nQuantidade de acesso ao barramento: %d' %(self.cache_hit, self.cache_hit/hm, self.cache_miss, self.cache_miss/hm, self.Memoria)
+        return 'Cache Hit: %d (%.2f%%)\nCache Miss: %d (%.2f%%)\nQuantidade de acesso ao barramento: %d' %(self.cache_hit, (self.cache_hit/hm)*100, self.cache_miss, (self.cache_miss/hm)*100, self.Memoria)
