@@ -1,3 +1,5 @@
+from Cache import *
+
 class CacheBySets(Cache):
     def __init__(self, linhas, palavras_linhas, alg_substituicao=1, politica=1, nro_linhas_conjuntos=-1):
         super().__init__(linhas, palavras_linhas, nro_linhas_conjuntos)
