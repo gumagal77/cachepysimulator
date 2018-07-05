@@ -62,7 +62,13 @@ class CacheBySets(Cache):
             self.cache_miss -= 1
 
     def writeThrough(self):
-        self.insert()
+        index = self.look()
+        if index != -1:
+            self.cache_hit -= 1
+        else:
+            self.insert()
+            self.cache_miss -= 1
+        
 
     def load(self):
         if self.look() == -1:  # Verificamos se o bloco se encontra na caixa
