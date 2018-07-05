@@ -27,7 +27,7 @@ def start_simulation():
             print('Instrução inválida')
 
 
-    arqname = str(str(menu.linhas_cache) + 'x' + str(menu.palavras_linha) + '_' + tmap + str(datetime.now()).replace(':', '-') + '.txt')
+    arqname = str(tmap + str(datetime.now()).replace(':', '-') + '.txt')
     arqgerado = open(arqname, 'a')
     arqgerado.write('Arquivo lido: '+patht+'\n'+info + mapt.__str__()+'\n')
     arqgerado.close()
@@ -80,31 +80,45 @@ while True:
                 config = arqconfig.read().split()
                 arqconfig.close()
 
-                menu = Menu()
-
-                if menu.politica == 1:
-                    tpol = '-Write through'
-                else:
-                    tpol = '-Write back'
-                if menu.alg_subs == 0:
-                    talg_subs = '-FIFO'
-                else:
-                    talg_subs = '-Aleatorio'
-
                 if int(config[0]) == 1:
                     tmap = 'DrctMap_'
 
-                    info = 'Mapeamento: '+tmap+'\nLinhas_cache: '+str(menu.linhas_cache)+'\nPalavras_linha: '+str(menu.palavras_linha)+'\nPolitica_escrita: '+str(menu.politica)+tpol+'\n\n'
+                    if config[3] == 1:
+                        tpol = '1-Write through'
+                    else:
+                        tpol = '2-Write back'
+
+                    info = 'Mapeamento: '+tmap+'\nLinhas_cache: '+str(config[1])+'\nPalavras_linha: '+str(config[2])+'\nPolitica_escrita: '+tpol+'\n\n'
                     mapt = CacheDrct(int(config[1]), int(config[2]), int(config[3]))
                 elif int(config[0]) == 2:
                     tmap = 'AssMap_'
-                    info = 'Mapeamento: '+tmap+'\nLinhas_cache: '+str(menu.linhas_cache)+'\nPalavras_linha: '+str(menu.palavras_linha)+'\nPolitica_escrita: '+str(menu.politica)+tpol+'\n'
-                    info = info + 'Alg_substituicao: '+str(menu.alg_subs)+talg_subs+'\nLinhas_conjunto: '+str(menu.linhas_cache)+'\n\n'
+
+                    if int(config[3]) == 1:
+                        tpol = '1-Write through'
+                    else:
+                        tpol = '2-Write back'
+                    if int(config[4]) == 0:
+                        talg_subs = '0-FIFO'
+                    else:
+                        talg_subs = '1-Aleatorio'
+
+                    info = 'Mapeamento: '+tmap+'\nLinhas_cache: '+str(config[1])+'\nPalavras_linha: '+str(config[2])+'\nPolitica_escrita: '+tpol+'\n'
+                    info = info + 'Alg_substituicao: '+talg_subs+'\nLinhas_conjunto: '+str(config[1])+'\n\n'
                     mapt = CacheBySets(int(config[1]), int(config[2]), int(config[3]), int(config[4]), int(config[1]))
                 else:
                     tmap = 'SetAssMap_'
-                    info = 'Mapeamento: '+tmap+'\nLinhas_cache: '+str(menu.linhas_cache)+'\nPalavras_linha: '+str(menu.palavras_linha)+'\nPolitica_escrita: '+str(menu.politica)+tpol+'\n'
-                    info = info + 'Alg_substituicao: '+str(menu.alg_subs)+talg_subs+'\nLinhas_conjunto: '+str(menu.linhas_conjunto)+'\n\n'
+
+                    if int(config[4]) == 1:
+                        tpol = '1-Write through'
+                    else:
+                        tpol = '2-Write back'
+                    if int(config[3]) == 0:
+                        talg_subs = '0-FIFO'
+                    else:
+                        talg_subs = '1-Aleatorio'
+
+                    info = 'Mapeamento: '+tmap+'\nLinhas_cache: '+str(config[1])+'\nPalavras_linha: '+str(config[2])+'\nPolitica_escrita: '+tpol+'\n'
+                    info = info + 'Alg_substituicao: '+talg_subs+'\nLinhas_conjunto: '+str(config[5])+'\n\n'
                     mapt = CacheBySets(int(config[1]), int(config[2]), int(config[3]), int(config[4]), int(config[5]))
                 start_simulation()
             except IOError:
