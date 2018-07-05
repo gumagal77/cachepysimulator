@@ -9,13 +9,16 @@ class CacheBySets(Cache):
         self.qtag = 0  # qual a tag do bloco atual
 
     # SEMPRE UTILIZAR PARA ATUALIZAR QUAL É O CONJUNTO E TAG ATUAL
-    def calcula(self, adress):
+        def calcula(self, adress):
         # calculo da tag e conj
         tipo, endereco = adress.split()
         endereco = int(endereco.split(',')[0], 16)
         endereco = int(endereco / self.tam_block)
         whichset = endereco % self.num_conjuntos
         tag = int(endereco / self.num_conjuntos)
+
+        self.tam_qtag = max(tag.bit_length(), self.tam_qtag)
+        self.tam_qconj = max(whichset.bit_length(), self.tam_qconj)
 
         self.qconj = whichset
         self.qtag = tag
