@@ -3,7 +3,6 @@ from CacheDrct import *
 from CacheBySets import *
 from datetime import datetime
 
-
 def start_simulation():
     while True:
         try:
@@ -80,6 +79,8 @@ while True:
                 arqconfig = open(path, 'r')
                 config = arqconfig.read().split()
                 arqconfig.close()
+
+                menu = Menu()
 
                 if menu.politica == 1:
                     tpol = '-Write through'
